@@ -1,0 +1,30 @@
+# README for Methodology 3
+Digital Image Forgery Detection: Methodology 3 **(Triple-Input EfficientNetV2S)**
+This project is part of a research thesis that aims to build an intelligent system for detecting image forgery. This methodology represents the most complex experiment, using multiple inputs to enhance the model's ability to capture diverse, fine-grained features.
+
+Methodology Summary
+This approach utilizes an **EfficientNetV2S** neural network model. The model is trained using three distinct types of inputs:
+
+**Stream 1:** RGB images.
+
+**Stream 2:** Error Level Analysis (ELA) images.
+
+**Stream 3:** Spatial Richness Model (SRM) images.
+
+The features extracted from these three streams are combined before the final classification, allowing the model to detect forgery from multiple perspectives.
+
+# Key Results
+The model was trained on the **CASIA 2.0** dataset. The triple-input model showed balanced performance and a superior ability to identify manipulated images. The results were as follows:
+
+Overall Accuracy: **87.00%**.
+
+Best AUC Value: **0.93385**.
+
+Recall for Forged Class: **0.95**.
+
+These results confirm the model's high recall for forged images, making it suitable for applications that require high sensitivity to forgery.
+
+# How to Use the Code
+To access and run the code for this methodology, please open the following Google Colab link:
+
+[https://colab.research.google.com/drive/1SWIVMyHJyat0zBGcvfAdcBRXzku4bkX2?usp=sharing]
