@@ -1,4 +1,4 @@
-# README for Methodology 3
+# README for **Methodology 3**
 Digital Image Forgery Detection: Methodology 3 **(Triple-Input EfficientNetV2S)**
 This project is part of a research thesis that aims to build an intelligent system for detecting image forgery. This methodology represents the most complex experiment, using multiple inputs to enhance the model's ability to capture diverse, fine-grained features.
 
