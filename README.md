@@ -27,6 +27,4 @@ These results prove that the dual-input model strikes an excellent balance betwe
 
 How to Use the Code
 To access and run the code for this methodology, please open the following Google Colab link:
-https://colab.research.google.com/drive/1Ih6SUtPCtkl-Ix89bDkqD1srwx5ZbiXg?usp=sharing
-
-[Google Colab Link for Methodology 1]
+[[Google Colab Link for Methodology 1](https://colab.research.google.com/drive/1Ih6SUtPCtkl-Ix89bDkqD1srwx5ZbiXg?usp=sharing)]
