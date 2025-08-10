@@ -1,30 +1,21 @@
-# Digital-image-forgery-detection
-semester Project for SPU - Digital image forgery detection using Deep Learning
-
-# Methodology 1
-Digital Image Forgery Detection: Methodology 1 **(Dual-Input ResNet50V2)**
-This project is part of a research thesis focused on developing an intelligent system for detecting digital image forgery using deep learning techniques. This methodology represents one of three experiments conducted to evaluate the effectiveness of different models for this task.
+# README for Methodology 2
+Digital Image Forgery Detection: Methodology 2 **(Single-Input ResNet101V2)**
+This project is part of a research thesis that explores the use of deep learning for detecting digital image forgery. This methodology investigates the potential of achieving high performance with only a single input type: Error Level Analysis (ELA).
 
 # Methodology Summary
-This approach utilizes a dual-input ResNet50V2 neural network model. The model is trained on two parallel streams:
-
-**Stream 1:** Takes the original RGB images as input.
-
-**Stream 2:** Takes the Error Level Analysis (ELA) images as input.
-
-The model merges the features extracted from both streams to enhance its ability to detect subtle signs of image manipulation.
+This approach relies on a ResNet101V2 neural network model that takes ELA images as a single input. The experiment focuses on leveraging the ELA technique's ability to highlight subtle changes in compression quality, which are often invisible to the human eye.
 
 # Key Results
-The model was trained on the CASIA 2.0 dataset. This methodology demonstrated the best overall performance compared to the other approaches, achieving:
+The model was trained on the **CASIA 2.0** dataset. It demonstrated strong performance, achieving:
 
-Overall Accuracy: **87.88%**.
+Overall Accuracy: **87.00%**.
 
-Best AUC (Area Under Curve) Value: **0.9468**.
+Best AUC Value: **0.88**.
 
-Recall for Forged Class: **0.8937**.
+Recall for Forged Class: **0.85**.
 
-These results prove that the dual-input model strikes an excellent balance between accuracy and computational efficiency.
+Although its performance was slightly lower than the dual-input model, it proved highly effective using only one type of input.
 
-How to Use the Code
+# How to Use the Code
 To access and run the code for this methodology, please open the following Google Colab link:
-[(https://colab.research.google.com/drive/1Ih6SUtPCtkl-Ix89bDkqD1srwx5ZbiXg?usp=sharing)]
+[https://colab.research.google.com/drive/1xaS9suZ1JK-IgTXcNYZ3NkUKMWNhHWdA?usp=sharing]
