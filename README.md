@@ -24,7 +24,7 @@
 
 ## 📝 Overview
 
-Digital image forgery detection is a critical challenge in the era of AI-generated and manipulated media. This project explores **three distinct deep learning methodologies** to detect forged or tampered images using the **CASIA 2.0 dataset**.
+Digital image forgery detection is a critical challenge in the era of AI-generated and manipulated media. This project explores **three distinct deep learning methodologies** to detect forged or tampered images.
 
 Each methodology leverages different neural network architectures and input combinations:
 - **RGB Images** - Original color information
@@ -97,6 +97,18 @@ Each methodology leverages different neural network architectures and input comb
 │ Triple-Input EfficientV2│  87.00%  │ 0.9338 │ 0.95   │
 └─────────────────────────┴──────────┴────────┴────────┘
 ```
+
+---
+
+## 📝 ⚠️ ملاحظة مهمة
+
+**الأكواد الحالية متاحة على [Google Colab](https://colab.research.google.com/) كـ Jupyter Notebooks**
+
+جاري العمل على تحويل وإضافة نسخة Python قابلة للاستخدام محلياً في المستودع. ستتضمن:
+- ✅ ملفات Python منفصلة قابلة للاستخدام
+- ✅ سهولة التكامل مع المشاريع الأخرى
+- ✅ دعم التثبيت عبر pip
+- ✅ أدوات سطر الأوامر للتدريب والتنبؤ
 
 ---
 
