@@ -1,4 +1,11 @@
 # app.py
+import tensorflow as tf
+import keras
+import streamlit as st
+
+st.write("TensorFlow:", tf.__version__)
+st.write("Keras:", keras.__version__)
+
 
 # Fix for Python 3.12 WMI timeout issue with TensorFlow/h5py
 import os
