@@ -1,0 +1,11 @@
+tensorflow>=2.15,<2.17
+numpy>=1.23,<2.0
+pillow>=9.0
+scikit-learn>=1.2
+matplotlib>=3.6
+seaborn>=0.12
+kagglehub>=0.2
+pandas>=1.5
+
+# only required for the optional --fine-tune stage (MixUp)
+tensorflow-probability>=0.22
