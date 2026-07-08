@@ -3,7 +3,7 @@
 ### Single-Input ResNet101V2 (Error Level Analysis)
 
 > Part of the [Digital Image Forgery Detection](https://github.com/Mariam6600/Digital-image-forgery-detection) project (Semester Project, SPU). This branch (`experiment2`) contains the lightweight, single-stream methodology.
-> 🔗 Original Colab notebook: https://colab.research.google.com/drive/1xaS9suZ1JK-IgTXcNYZ3NkUKMWNhHWdA?usp=sharing
+> 🔗 Original Colab notebook: see repository history for the original notebook link.
 
 ---
 
