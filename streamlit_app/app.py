@@ -313,7 +313,7 @@ IMG_HEIGHT = 224
 IMAGE_SIZE = (IMG_HEIGHT, IMG_WIDTH)
 MODEL_PATH = 'models/best_dual_model_robust_head.keras'
 # ⚠️ استبدلي القيمة تحت بمعرّف ملفك انتي بجوجل درايف (خطوة 1 بالـ README) — هاد المعرف تبع صاحبك، لازم يتغير
-GDRIVE_FILE_ID = 'PUT_YOUR_OWN_GOOGLE_DRIVE_FILE_ID_HERE'
+GDRIVE_FILE_ID = '19-Hn7hBFhg0csmufw9AyLoQIRsOyzFDw'
 
 # --- دوال مساعدة ---
 def download_model_if_needed(model_path, gdrive_file_id):
