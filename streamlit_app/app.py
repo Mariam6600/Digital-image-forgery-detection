@@ -326,14 +326,18 @@ def download_model_if_needed(model_path, gdrive_file_id):
             return False
 
     if not os.path.exists(model_path):
-        url = f'https://drive.google.com/uc?id={gdrive_file_id}'
         progress_bar = st.progress(0)
         status_text = st.empty()
         status_text.info("⏬ جاري تنزيل النموذج من Google Drive... يرجى الانتظار.")
         
         try:
             with st.spinner("Downloading model... This may take a few moments."):
-                output = gdown.download(url, model_path, quiet=False)
+                output = gdown.download(
+                        id=gdrive_file_id,
+                        output=model_path,
+                        quiet=False,
+                        fuzzy=True
+                    )
                 if output is None:
                     status_text.error("""
                     ❌ فشل تنزيل النموذج. يرجى التحقق من:
