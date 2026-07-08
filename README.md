@@ -2,8 +2,11 @@
 
 ### Dual-Input ResNet50V2 (RGB + Error Level Analysis)
 
-> Part of the [Digital Image Forgery Detection](https://github.com/Mariam6600/Digital-image-forgery-detection) project (Semester Project, SPU). This is the **flagship / best-performing** methodology, deployed in the [Streamlit demo app](#streamlit-demo).
-> 🔗 Original Colab notebook: see repository history for the original notebook link.
+> Part of the [Digital Image Forgery Detection](https://github.com/Mariam6600/Digital-image-forgery-detection) project (Semester Project, SPU). This is the **flagship / best-performing** methodology.
+
+### 🚀 [Try the live demo](https://digital-image-forgery-detection-hpbpmrn8y9elvxtaaab2dt.streamlit.app/)
+
+Upload an image and the app will tell you whether it looks authentic or tampered, using the model described below.
 
 ---
 
