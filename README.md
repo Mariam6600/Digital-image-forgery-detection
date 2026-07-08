@@ -71,7 +71,12 @@ main/  (repo root on the `main` branch)
 │   ├── predict.py              # single-image / folder inference — used by the Streamlit app
 │   └── utils.py                 # ELA generation, seeding, plotting
 ├── data/            # created by the pipeline (git-ignored)
-└── models/          # checkpoints saved here (git-ignored)
+└── models/          # git-ignored — used two ways:
+                      #  1) `python -m src.training` saves new checkpoints here
+                      #  2) the Streamlit app also downloads its model into this
+                      #     same folder at runtime — but from Google Drive, which
+                      #     is the actual source of truth (see streamlit_app/README.md).
+                      #     Nothing under models/ is ever committed to git.
 ```
 
 ## Installation
@@ -128,7 +133,7 @@ All hyperparameters live in `src/config.py`:
 
 ## Streamlit demo
 
-The trained head model (`best_dual_model_robust_head.keras`) powers a Streamlit web demo — see `streamlit_app/` at the repository root (outside this branch's `src/`, shared across methodologies) for the app code and deployment instructions.
+The trained head model (`best_dual_model_robust_head.keras`) powers a Streamlit web demo — see `streamlit_app/` in this branch (`main`) for the app code and deployment instructions. This app lives only on `main`, since it's built specifically around this branch's model.
 
 ## Dataset
 
