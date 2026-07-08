@@ -1,284 +1,141 @@
-# 🔍 Digital Image Forgery Detection using Deep Learning
+# 🔍 Digital Image Forgery Detection — Methodology 1 (main)
 
-> **Semester Project for SPU** - An intelligent system for detecting digital image forgery using state-of-the-art deep learning techniques.
+### Dual-Input ResNet50V2 (RGB + Error Level Analysis)
 
-![Status](https://img.shields.io/badge/status-active-brightgreen)
-![Python](https://img.shields.io/badge/python-3.8%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-
----
-
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Methodologies](#methodologies)
-- [Key Results](#key-results)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Branches](#branches)
-- [Dataset](#dataset)
-- [References](#references)
+> Part of the [Digital Image Forgery Detection](https://github.com/Mariam6600/Digital-image-forgery-detection) project (Semester Project, SPU). This is the **flagship / best-performing** methodology, deployed in the [Streamlit demo app](#streamlit-demo).
+> 🔗 Original Colab notebook: see repository history for the original notebook link.
 
 ---
 
-## 📝 Overview
+## Overview
 
-Digital image forgery detection is a critical challenge in the era of AI-generated and manipulated media. This project explores **three distinct deep learning methodologies** to detect forged or tampered images.
+This methodology fuses two complementary views of the same image:
 
-Each methodology leverages different neural network architectures and input combinations:
-- **RGB Images** - Original color information
-- **Error Level Analysis (ELA)** - Highlights compression artifacts
-- **Spatial Richness Model (SRM)** - Captures subtle noise patterns
+- **RGB stream** — the natural photo, heavily augmented (flips, rotation, zoom, translation, contrast, brightness) since real photos tolerate a lot of distortion.
+- **ELA stream** — an Error Level Analysis map (re-save the image at a known JPEG quality, take the pixel-wise difference with the original). Regions edited *after* the last real JPEG compression show a different error level. Only a horizontal flip is applied here — any geometric/photometric augmentation would corrupt this subtle signal.
 
----
-
-## 🧠 Methodologies
-
-### **Methodology 1: Dual-Input ResNet50V2** ⭐ (Best Performer)
-**Branch:** `main`  
-**Architecture:** Dual-stream neural network merging RGB and ELA inputs
-
-| Metric | Score |
-|--------|-------|
-| **Accuracy** | 87.88% |
-| **AUC** | 0.9468 |
-| **Recall** | 0.8937 |
-
-✅ **Best balance between accuracy and computational efficiency**
-
-📖 [View Full Documentation](https://github.com/Mariam6600/Digital-image-forgery-detection/blob/main/README.md) | 
-🔗 [Colab Notebook](https://colab.research.google.com/drive/1Ih6SUtPCtkl-Ix89bDkqD1srwx5ZbiXg?usp=sharing)
-
----
-
-### **Methodology 2: Single-Input ResNet101V2**
-**Branch:** `experiment2`  
-**Architecture:** Single-stream network using only ELA images
-
-| Metric | Score |
-|--------|-------|
-| **Accuracy** | 87.00% |
-| **AUC** | 0.88 |
-| **Recall** | 0.85 |
-
-💡 **Lightweight alternative with strong performance**
-
-📖 [View Full Documentation](https://github.com/Mariam6600/Digital-image-forgery-detection/blob/experiment2/README.md) |
-🔗 [Colab Notebook](https://colab.research.google.com/drive/1xaS9suZ1JK-IgTXcNYZ3NkUKMWNhHWdA?usp=sharing)
-
----
-
-### **Methodology 3: Triple-Input EfficientNetV2S**
-**Branch:** `experiment3`  
-**Architecture:** Triple-stream network using RGB, ELA, and SRM inputs
-
-| Metric | Score |
-|--------|-------|
-| **Accuracy** | 87.00% |
-| **AUC** | 0.93385 |
-| **Recall** | 0.95 |
-
-🎯 **Highest recall - optimal for high-sensitivity forgery detection**
-
-📖 [View Full Documentation](https://github.com/Mariam6600/Digital-image-forgery-detection/blob/experiment3/README.md) |
-🔗 [Colab Notebook](https://colab.research.google.com/drive/1SWIVMyHJyat0zBGcvfAdcBRXzku4bkX2?usp=sharing)
-
----
-
-## 📊 Key Results Comparison
+Each stream is processed by its own frozen, ImageNet-pretrained **ResNet50V2** backbone; the pooled features are concatenated (late fusion) and passed through a regularized dense head.
 
 ```
-┌─────────────────────────┬──────────┬────────┬────────┐
-│ Methodology             │ Accuracy │  AUC   │ Recall │
-├─────────────────────────┼──────────┼────────┼────────┤
-│ Dual-Input ResNet50V2   │  87.88%  │ 0.9468 │ 0.8937 │
-│ Single-Input ResNet101V2│  87.00%  │ 0.88   │ 0.85   │
-│ Triple-Input EfficientV2│  87.00%  │ 0.9338 │ 0.95   │
-└─────────────────────────┴──────────┴────────┴────────┘
+        RGB image (224×224×3)                    ELA image (224×224×3)
+              │                                          │
+      Strong augmentation                        RandomFlip(horizontal)
+   (flip/rotate/zoom/translate/                          │
+      contrast/brightness)                       Rescaling [0,1]
+              │                                          │
+   ResNetV2 preprocessing [-1,1]                          │
+              │                                          │
+     ResNet50V2 (frozen, avg-pool)            ResNet50V2 (frozen, avg-pool)
+              │                                          │
+              └───────────────┬──────────────────────────┘
+                               │  concatenate
+                       Dense(512, L2) → BatchNorm → Dropout(0.65)
+                       Dense(256, L2) → BatchNorm → Dropout(0.55)
+                               │
+                        Dense(1, sigmoid) → P(forged)
 ```
 
----
+## Results
 
-## 📝 ⚠️ ملاحظة مهمة
+Head-only model (`best_dual_model_robust_head.keras` — the model used in the Streamlit demo), on the validation split:
 
-**الأكواد الحالية متاحة على [Google Colab](https://colab.research.google.com/) كـ Jupyter Notebooks**
+| Metric | Value |
+|---|---|
+| Validation AUC | 0.9468 |
+| Validation loss | 0.3667 |
+| Validation accuracy | ≈ 0.87 |
+| Validation precision / recall | ≈ 0.79 / 0.93 |
 
-جاري العمل على تحويل وإضافة نسخة Python قابلة للاستخدام محلياً في المستودع. ستتضمن:
-- ✅ ملفات Python منفصلة قابلة للاستخدام
-- ✅ سهولة التكامل مع المشاريع الأخرى
-- ✅ دعم التثبيت عبر pip
-- ✅ أدوات سطر الأوامر للتدريب والتنبؤ
+An optional fine-tuning stage ("Careful Fine-Tuning Stage 1" — last ResNet block unfrozen, lr=5e-6) is included in `src/training.py --fine-tune`. It reaches 87.88% accuracy but a higher (worse) validation loss than the head-only model, so it is not the version used downstream.
 
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
-Digital-image-forgery-detection/
-├── README.md                 # Main documentation
-├── requirements.txt          # Python dependencies
-├── setup.py                  # Project setup
-├── .gitignore               # Git ignore rules
+main/  (repo root on the `main` branch)
+├── README.md
+├── requirements.txt
+├── setup.py
+├── .gitignore
 ├── notebooks/
-│   ├── methodology1_dual_input.ipynb
-│   ├── methodology2_single_input.ipynb
-│   └── methodology3_triple_input.ipynb
+│   └── methodology1_dual_input_original.ipynb   # original Colab notebook, kept for provenance
 ├── src/
 │   ├── __init__.py
-│   ├── data_preprocessing.py     # Image preprocessing & ELA generation
-│   ├── model_architecture.py     # Neural network models
-│   ├── training.py              # Training loop
-│   ├── evaluation.py            # Metrics computation
-│   └── utils.py                 # Helper functions
-├── data/
-│   ├── CASIA2/               # Dataset (not included in repo)
-│   ├── train/
-│   ├── test/
-│   └── val/
-└── models/
-    └── pretrained/           # Saved models
+│   ├── config.py               # all hyperparameters & paths in one place
+│   ├── data_preprocessing.py   # CASIA2 download, split, TIF→PNG, ELA generation, dual-input tf.data
+│   ├── model_architecture.py   # build_robust_dual_input_model()
+│   ├── training.py             # head training + optional fine-tuning
+│   ├── evaluation.py           # classification report, confusion matrix, F1
+│   ├── predict.py              # single-image / folder inference — used by the Streamlit app
+│   └── utils.py                 # ELA generation, seeding, plotting
+├── data/            # created by the pipeline (git-ignored)
+└── models/          # checkpoints saved here (git-ignored)
 ```
 
----
+## Installation
 
-## 🚀 Installation
-
-### Prerequisites
-- Python 3.8+
-- pip or conda
-- GPU (optional but recommended for faster training)
-
-### Steps
-
-1. **Clone the repository:**
 ```bash
 git clone https://github.com/Mariam6600/Digital-image-forgery-detection.git
-cd Digital-image-forgery-detection
-```
-
-2. **Create a virtual environment:**
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies:**
-```bash
+cd Digital-image-forgery-detection      # main branch by default
+python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. **Download CASIA 2.0 dataset:**
-   - Download from [CASIA Forensics Detection](http://forensics.idealtest.org/index_12.html)
-   - Extract to `data/CASIA2/` directory
+You'll also need a Kaggle API token (`~/.kaggle/kaggle.json`) so `kagglehub` can download the CASIA 2.0 dataset — see [Kaggle API docs](https://github.com/Kaggle/kaggle-api#api-credentials).
 
----
+## Reproducing the results
 
-## ⚡ Quick Start
+Every stage is idempotent — safe to re-run, it skips work that's already done unless `--force` is passed.
 
-### Running on Google Colab (Recommended)
-Each methodology has a dedicated Colab notebook with all code pre-configured:
-
-| Methodology | Colab Link |
-|------------|-----------|
-| Dual-Input (Methodology 1) | [🔗 Open Colab](https://colab.research.google.com/drive/1Ih6SUtPCtkl-Ix89bDkqD1srwx5ZbiXg?usp=sharing) |
-| Single-Input (Methodology 2) | [🔗 Open Colab](https://colab.research.google.com/drive/1xaS9suZ1JK-IgTXcNYZ3NkUKMWNhHWdA?usp=sharing) |
-| Triple-Input (Methodology 3) | [🔗 Open Colab](https://colab.research.google.com/drive/1SWIVMyHJyat0zBGcvfAdcBRXzku4bkX2?usp=sharing) |
-
-### Running Locally
-
-```python
-from src.model_architecture import DualInputResNet50V2
-from src.training import train_model
-from src.data_preprocessing import load_dataset
-
-# Load data
-train_loader, val_loader, test_loader = load_dataset('data/CASIA2/')
-
-# Initialize model
-model = DualInputResNet50V2()
-
-# Train
-train_model(model, train_loader, val_loader, epochs=50)
-```
-
----
-
-## 🌿 Branches
-
-| Branch | Methodology | Architecture | Best For |
-|--------|-------------|--------------|----------|
-| `main` | Methodology 1 | Dual-Input ResNet50V2 | 🌟 Production use |
-| `experiment2` | Methodology 2 | Single-Input ResNet101V2 | 💡 Lightweight deployment |
-| `experiment3` | Methodology 3 | Triple-Input EfficientNetV2S | 🎯 High-recall scenarios |
-
-**Switch branches:**
 ```bash
-git checkout experiment2    # or experiment3
+# 1. Download CASIA2, split train/val (80/20), convert TIF→PNG, generate ELA images
+python -m src.data_preprocessing
+
+# 2. Train the fusion + classification head (both backbones frozen) — this is the reported/deployed model
+python -m src.training --epochs 150 --plot
+
+# 3. (Optional, not recommended — see note above) fine-tune the last residual block
+python -m src.training --fine-tune
+
+# 4. Evaluate on the validation split
+python -m src.evaluation --model-path models/dual_input_resnet50v2_head/best_dual_model_robust_head.keras
+
+# 5. Run inference on a single image or a folder
+python -m src.predict --model-path models/dual_input_resnet50v2_head/best_dual_model_robust_head.keras --image path/to/image.jpg
+python -m src.predict --model-path models/dual_input_resnet50v2_head/best_dual_model_robust_head.keras --folder path/to/folder/
 ```
 
----
+### Reproducibility note
 
-## 📦 Dataset
+`SEED = 42` is fixed for data shuffling/splitting and weight initialization (`src/config.py`). Exact bit-for-bit reproducibility on GPU is **not** guaranteed — several cuDNN convolution kernels are non-deterministic by default — so re-running the pipeline should reproduce the reported metrics within roughly ±0.5–1%, not to the fourth decimal place.
 
-**CASIA 2.0 (Chinese Academy of Sciences):**
-- **Total Images:** 21,000+
-- **Authentic:** 7,200 images
-- **Forged:** 14,400 images
-- **Resolution:** 256×256 to 800×800 pixels
+## Configuration
 
-📥 [Download CASIA 2.0](http://forensics.idealtest.org/index_12.html)
+All hyperparameters live in `src/config.py`:
 
----
+| Parameter | Value |
+|---|---|
+| Image size | 224×224 |
+| Batch size | 32 |
+| Max epochs (head) | 150 (EarlyStopping patience=12, monitor=val_loss) |
+| Checkpoint metric | val_auc (max) |
+| Optimizer | AdamW, lr=3e-4, weight_decay=1e-4 |
+| ReduceLROnPlateau | factor=0.2, patience=5 |
+| ELA quality / scale | 90 / 15 |
+| Validation split | 20% |
 
-## 🔧 Key Features
+## Streamlit demo
 
-✅ **Three distinct methodologies** - Compare different approaches  
-✅ **Pre-trained models** - Ready to use for inference  
-✅ **Comprehensive evaluation metrics** - Accuracy, Precision, Recall, AUC, F1  
-✅ **ELA preprocessing** - Error Level Analysis image generation  
-✅ **Google Colab ready** - No local GPU required  
-✅ **Visualization tools** - Plot results and confusion matrices  
+The trained head model (`best_dual_model_robust_head.keras`) powers a Streamlit web demo — see `streamlit_app/` at the repository root (outside this branch's `src/`, shared across methodologies) for the app code and deployment instructions.
 
----
+## Dataset
 
-## 📚 References
+**CASIA 2.0** — 21,000+ images (7,200 authentic / 14,400 tampered), 256×256–800×800px. [Download](http://forensics.idealtest.org/index_12.html) · [Kaggle mirror used here](https://www.kaggle.com/datasets/divg07/casia-20-image-tampering-detection-dataset).
 
-1. He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep Residual Learning for Image Recognition. [arXiv](https://arxiv.org/abs/1512.03385)
-2. Tan, M., & Le, Q. (2021). EfficientNetV2: Smaller Models and Faster Training. [arXiv](https://arxiv.org/abs/2104.14294)
-3. Fridrich, J., Kodovský, J. (2012). Rich Models for Steganalysis of Digital Images. [IEEE Transactions](https://ieeexplore.ieee.org/)
-4. Zhong, J., & Huang, Y. (2007). CASIA2: A Large-Scale Heterogeneous Image Forgery Database. [Forensics DB](http://forensics.idealtest.org/)
+## References
 
----
-
-## 👤 Author
-
-**Mariam Abd Al Aal**  
-Student at SPU | Deep Learning Researcher  
-📧 [abdmariam900@gmail.com](mailto:abdmariam900@gmail.com)
+1. He, K. et al. (2016). *Deep Residual Learning for Image Recognition.* [arXiv:1512.03385](https://arxiv.org/abs/1512.03385)
+2. Zhong, J., Huang, Y. (2007). *CASIA2: A Large-Scale Heterogeneous Image Forgery Database.*
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-**Future Improvements:**
-- [ ] Add Vision Transformer (ViT) methodology
-- [ ] Implement model quantization for edge deployment
-- [ ] Create REST API for inference
-- [ ] Add real-time video forgery detection
-- [ ] Implement attention mechanism visualization
-
----
-
-## ⭐ If you find this project helpful, please consider giving it a star!
-
-**Last Updated:** August 10, 2025  
-**Status:** ✅ Active Development
+See the [experiment2](https://github.com/Mariam6600/Digital-image-forgery-detection/tree/experiment2) and [experiment3](https://github.com/Mariam6600/Digital-image-forgery-detection/tree/experiment3) branches for the other two methodologies.
