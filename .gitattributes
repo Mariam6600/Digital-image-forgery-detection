@@ -1,0 +1,3 @@
+# Exclude the archived original notebook from GitHub's language statistics —
+# it's kept only for provenance; the actual, maintained code is in src/.
+notebooks/*.ipynb linguist-documentation
