@@ -313,7 +313,7 @@ IMG_HEIGHT = 224
 IMAGE_SIZE = (IMG_HEIGHT, IMG_WIDTH)
 MODEL_PATH = 'models/best_dual_model_robust_head.keras'
 # ⚠️ استبدلي القيمة تحت بمعرّف ملفك انتي بجوجل درايف (خطوة 1 بالـ README) — هاد المعرف تبع صاحبك، لازم يتغير
-GDRIVE_FILE_ID = 'PUT_YOUR_OWN_GOOGLE_DRIVE_FILE_ID_HERE'
+GDRIVE_FILE_ID = '19-Hn7hBFhg0csmufw9AyLoQIRsOyzFDw'
 
 # --- دوال مساعدة ---
 def download_model_if_needed(model_path, gdrive_file_id):
@@ -326,14 +326,18 @@ def download_model_if_needed(model_path, gdrive_file_id):
             return False
 
     if not os.path.exists(model_path):
-        url = f'https://drive.google.com/uc?id={gdrive_file_id}'
         progress_bar = st.progress(0)
         status_text = st.empty()
         status_text.info("⏬ جاري تنزيل النموذج من Google Drive... يرجى الانتظار.")
         
         try:
             with st.spinner("Downloading model... This may take a few moments."):
-                output = gdown.download(url, model_path, quiet=False)
+                output = gdown.download(
+                        id=gdrive_file_id,
+                        output=model_path,
+                        quiet=False,
+                        fuzzy=True
+                    )
                 if output is None:
                     status_text.error("""
                     ❌ فشل تنزيل النموذج. يرجى التحقق من:
